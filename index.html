@@ -1,0 +1,1187 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRADELINE.SHOP — Demo</title>
+<style>
+:root{--bg:#f7fbff;--card:#ffffff;--text:#0e2a3f;--muted:#5b7a93;--accent:#0ea5e9;--accent-600:#0284c7;--accent-50:#e0f2fe;--border:#d8e6f3;--table-stripe:#f0f7fd;--danger:#ef4444}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+.container{max-width:1200px;margin:24px auto;padding:0 16px}
+.brand{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.brand-left{display:flex;align-items:center;gap:12px}
+.brand-right{display:flex;align-items:center;gap:12px}
+.logo{width:12px;height:12px;border-radius:50%;background:var(--accent)}
+.brand h1{margin:0;color:var(--accent-600);letter-spacing:.5px;font-weight:700}
+.user-info{display:flex;align-items:center;gap:8px}
+.user-info span{color:var(--text);font-weight:600}
+.cart-icon{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--accent);color:#fff;border-radius:20px;cursor:pointer;font-size:14px;font-weight:600}
+.cart-icon:hover{background:var(--accent-600)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px;border-bottom:1px solid var(--border)}
+.toolbar .search{flex:1;min-width:200px}
+input[type="text"],select{width:100%;height:36px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);padding:0 10px;outline:none;min-width:120px}
+input[type="text"]::placeholder{color:var(--muted)}
+.btn{height:36px;border-radius:8px;border:1px solid var(--accent-600);background:var(--accent);color:#fff;padding:0 12px;cursor:pointer}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+thead th{position:sticky;top:0;background:linear-gradient(#fff,var(--card));z-index:1}
+th,td{white-space:nowrap;border-bottom:1px solid var(--border);padding:10px 12px;width:12.5%}
+tbody tr:nth-child(odd){background:var(--table-stripe)}
+th{font-weight:600;color:var(--muted);text-align:center}
+td{text-align:center}
+th.sortable{cursor:pointer}
+th.sortable .arrow{margin-left:6px;opacity:.5}
+.filters{background:var(--accent-50)}
+.filters select{background:#fff}
+.filters th{width:auto;min-width:120px;text-align:center}
+.filters th:first-child{width:40px;min-width:40px}
+.filters th select,.filters th input{display:block;margin:0 auto}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--accent-50);border:1px solid var(--border);color:var(--accent-600);font-size:12px}
+.actions .btn{background:var(--accent-600);border-color:var(--accent-600)}
+.muted{color:var(--muted)}
+.footer{display:flex;gap:8px;justify-content:flex-end;padding:12px}
+.pill{border:1px solid var(--border);padding:6px 10px;border-radius:999px;background:#fff}
+.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5)}
+.modal-content{background:var(--card);margin:5% auto;padding:0;border-radius:10px;width:90%;max-width:600px;max-height:80vh;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid var(--border);background:var(--accent-50)}
+.modal-header h2{margin:0;color:var(--accent-600)}
+.close{font-size:28px;font-weight:bold;cursor:pointer;color:var(--muted)}
+.close:hover{color:var(--text)}
+.modal-body{padding:20px;max-height:400px;overflow-y:auto}
+.modal-footer{display:flex;gap:12px;justify-content:flex-end;padding:20px;border-top:1px solid var(--border);background:var(--accent-50)}
+.cart-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:#fff}
+.cart-item-info{flex:1}
+.cart-item-price{font-weight:600;color:var(--accent-600)}
+.cart-item-remove{background:var(--danger);color:#fff;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;font-size:12px}
+.cart-total{text-align:right;padding:16px;border-top:2px solid var(--border);margin-top:16px;font-size:18px;color:var(--accent-600)}
+
+.form-group{margin-bottom:16px}
+.form-group label{display:block;margin-bottom:6px;font-weight:600;color:var(--text)}
+.form-group input{width:100%;height:40px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);padding:0 12px;outline:none;font-size:14px}
+.form-group input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(14,165,233,0.1)}
+.form-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px}
+.form-actions .btn{flex:1;max-width:150px}
+
+.profile-tabs{display:flex;gap:8px;margin-bottom:24px;border-bottom:1px solid var(--border)}
+.tab-btn{padding:8px 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s}
+.tab-btn.active{color:var(--accent-600);border-bottom-color:var(--accent-600)}
+.tab-btn:hover{color:var(--text)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.balance-info{text-align:center;padding:24px}
+.balance-amount{font-size:32px;font-weight:700;color:var(--accent-600);margin:16px 0}
+.payment-section{margin-top:32px;padding:24px;border:1px solid var(--border);border-radius:8px;background:#fff}
+.payment-methods{margin-bottom:24px}
+.payment-option{display:flex;align-items:center;gap:8px;padding:12px;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.2s}
+.payment-option:hover{background:var(--accent-50)}
+.payment-option input[type="radio"]{margin:0}
+.zelle-instructions{margin-top:24px}
+.zelle-instructions h4{margin-bottom:16px;color:var(--accent-600)}
+.payment-details{background:var(--accent-50);padding:16px;border-radius:8px;border:1px solid var(--border)}
+.detail-row{margin-bottom:8px;font-size:14px}
+.detail-row:last-child{margin-bottom:0}
+.please-note{margin-top:24px;padding:16px;background:#fff3cd;border:1px solid #ffeaa7;border-radius:8px}
+.please-note h4{margin-bottom:12px;color:#856404;font-size:16px}
+.please-note p{margin-bottom:8px;color:#856404;font-size:14px;line-height:1.4}
+.please-note p:last-child{margin-bottom:0}
+.cart-summary{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:8px;background:#fff}
+.summary-info{margin-bottom:16px}
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.summary-row:last-child{border-bottom:none;font-weight:600;font-size:16px}
+.total-amount{color:var(--accent-600);font-weight:700;font-size:18px}
+.orders-list,.payments-list{max-height:400px;overflow-y:auto}
+.order-item,.payment-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:#fff}
+.order-info,.payment-info{flex:1}
+.order-date,.payment-date{color:var(--muted);font-size:12px}
+.order-amount,.payment-amount{font-weight:600;color:var(--accent-600)}
+.no-data{text-align:center;color:var(--muted);padding:24px;font-style:italic}
+
+@media (max-width:720px){
+  .toolbar{padding:8px}
+  th,td{padding:8px}
+  .modal-content{width:95%;margin:10% auto}
+  .modal-footer{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="brand">
+  <div class="brand-left">
+    <div class="logo"></div>
+    <h1>TRADELINE.SHOP</h1>
+  </div>
+  <div class="brand-right">
+    <div class="user-info" id="userInfo" style="display:none;">
+      <span id="userName"></span>
+      <button id="profileBtn" class="btn" style="background:var(--muted);border-color:var(--muted);margin-left:8px;">Profile</button>
+      <button id="logoutBtn" class="btn" style="background:var(--danger);border-color:var(--danger);margin-left:8px;">Logout</button>
+    </div>
+    <div class="auth-buttons" id="authButtons">
+      <button id="loginBtn" class="btn" style="background:var(--muted);border-color:var(--muted);margin-right:8px;">Login</button>
+      <button id="registerBtn" class="btn">Register</button>
+    </div>
+    <div class="cart-icon" id="cartIcon">🛒 <span id="cartCount">0</span></div>
+  </div>
+</div>
+<div class="card">
+  <div class="toolbar">
+    <div class="search"><input id="searchInput" type="text" placeholder="Search by bank, limit, statement day..."></div>
+    <button id="resetFilters" class="btn">Reset</button>
+  </div>
+  <div class="table-wrap">
+    <table id="linesTable">
+      <thead>
+        <tr>
+          <th class="sortable" data-key="lender">Lender <span class="arrow">⇅</span></th>
+          <th class="sortable" data-key="limit">Limit <span class="arrow">⇅</span></th>
+          <th class="sortable" data-key="statementDay">Statement Day <span class="arrow">⇅</span></th>
+          <th class="sortable" data-key="posting">Posting Day <span class="arrow">⇅</span></th>
+          <th class="sortable" data-key="ageMonths">Account Age <span class="arrow">⇅</span></th>
+          <th class="sortable" data-key="price">Price <span class="arrow">⇅</span></th>
+          <th class="sortable" data-key="spots">Cycles <span class="arrow">⇅</span></th>
+            <th>Action</th>
+        </tr>
+        <tr class="filters">
+          <th><select id="lenderSelect"><option value="">Select</option><option>CITIBANK</option><option>ELAN</option><option>CHASE</option><option>USBANK</option><option>DISCOVER</option><option>PNC</option><option>Bank of America</option><option>BARCLAYS</option><option>CAPITAL ONE</option><option>TD BANK</option></select></th>
+          <th><select id="limitSelect"><option value="">Select Range</option><option>$1,000 - $5,000</option><option>$5,001 - $10,000</option><option>$10,001 - $15,000</option><option>$15,001 - $20,000</option><option>$20,001 - $30,000</option><option>$30,000 - $50,000</option><option>$50,001 +</option></select></th>
+          <th><select id="statementSelect"><option value="">Select</option><option>01st</option><option>02nd</option><option>03rd</option><option>04th</option><option>05th</option><option>06th</option><option>07th</option><option>08th</option><option>09th</option><option>10th</option><option>14th</option><option>15th</option><option>16th</option><option>24th</option><option>25th</option></select></th>
+          <th><input id="postingInput" type="text" placeholder="напр. Nov 24,2025"></th>
+          <th><select id="ageSelect"><option value="">Select Range</option><option>0 - 3</option><option>4 - 10</option><option>11 - 18</option><option>19 - 25</option><option>25 +</option></select></th>
+          <th><select id="priceSelect"><option value="">Select Range</option><option>$100 - $500</option><option>$501 - $750</option><option>$751 - $1150</option><option>$1150 +</option></select></th>
+          <th><select id="spotsSelect"><option value="">Select</option><option>1</option><option>2</option><option>3</option></select></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="footer"><div class="pill"><span class="muted">Total records:</span> <span id="totalCount">0</span></div></div>
+</div>
+</div>
+
+<div id="cartModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Cart</h2>
+      <span class="close" id="closeCart">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div id="cartItems"></div>
+      <div class="cart-total">
+        <strong>Total: $<span id="cartTotal">0.00</span></strong>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="clearCart" class="btn" style="background:var(--danger);border-color:var(--danger)">Clear Cart</button>
+      <button id="checkout" class="btn">Checkout</button>
+    </div>
+  </div>
+</div>
+
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Login</h2>
+      <span class="close" id="closeLogin">&times;</span>
+    </div>
+    <div class="modal-body">
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email:</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPhone">Phone Number:</label>
+          <input type="tel" id="loginPhone" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password:</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Login</button>
+          <button type="button" id="showRegister" class="btn" style="background:var(--muted);border-color:var(--muted)">Register</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="registerModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Registration</h2>
+      <span class="close" id="closeRegister">&times;</span>
+    </div>
+    <div class="modal-body">
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="regFirstName">First Name:</label>
+          <input type="text" id="regFirstName" required>
+        </div>
+        <div class="form-group">
+          <label for="regLastName">Last Name:</label>
+          <input type="text" id="regLastName" required>
+        </div>
+        <div class="form-group">
+          <label for="regPhone">Phone Number:</label>
+          <input type="tel" id="regPhone" required>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email:</label>
+          <input type="email" id="regEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Password:</label>
+          <input type="password" id="regPassword" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="regConfirmPassword">Confirm Password:</label>
+          <input type="password" id="regConfirmPassword" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Register</button>
+          <button type="button" id="showLogin" class="btn" style="background:var(--muted);border-color:var(--muted)">Already have an account?</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="profileModal" class="modal">
+  <div class="modal-content" style="max-width:800px;">
+    <div class="modal-header">
+      <h2>Profile</h2>
+      <span class="close" id="closeProfile">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="profile-tabs">
+        <button class="tab-btn active" data-tab="balance">Balance</button>
+        <button class="tab-btn" data-tab="orders">Orders</button>
+      </div>
+      
+      <div id="balanceTab" class="tab-content active">
+        <div class="cart-summary">
+          <h3>Cart Summary</h3>
+          <div class="summary-info">
+            <div class="summary-row">
+              <span>Items in cart:</span>
+              <span id="cartItemsCount">0</span>
+            </div>
+            <div class="summary-row">
+              <span>Total Amount:</span>
+              <span class="total-amount">$<span id="cartTotalAmount">0.00</span></span>
+            </div>
+          </div>
+          <button id="sendConfirmationBtn" class="btn" style="width:100%;margin-top:16px;">Send Confirmation</button>
+        </div>
+        
+        <div class="payment-section">
+          <h3>Payment Options</h3>
+          <div class="payment-methods">
+            <label class="payment-option">
+              <input type="radio" name="paymentMethod" value="zelle" checked>
+              <span>Zelle (Same-day Transfer)</span>
+            </label>
+          </div>
+          
+          <div class="zelle-instructions">
+            <h4>Zelle Payment Instructions</h4>
+            <div class="payment-details">
+              <div class="detail-row">
+                <strong>Name:</strong> ZHART LLC
+              </div>
+              <div class="detail-row">
+                <strong>Phone:</strong> 2245844005
+              </div>
+            </div>
+          </div>
+          
+          <div class="please-note">
+            <h4>Please Note</h4>
+            <p>For same-day account credit, upload transfer confirmation under Proof of Payment. Contact your bank directly to learn more about their sending limits through Zelle</p>
+          </div>
+        </div>
+      </div>
+      
+      <div id="ordersTab" class="tab-content">
+        <h3>Order History</h3>
+        <div id="ordersList" class="orders-list">
+          <p class="no-data">No orders yet</p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<div id="addFundsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Add Funds</h2>
+      <span class="close" id="closeAddFunds">&times;</span>
+    </div>
+    <div class="modal-body">
+      <form id="addFundsForm">
+        <div class="form-group">
+          <label for="amount">Amount ($):</label>
+          <input type="number" id="amount" min="10" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="paymentMethod">Payment Method:</label>
+          <select id="paymentMethod" required>
+            <option value="zelle" selected>Zelle (Same-day Transfer)</option>
+            <option value="card">Credit Card</option>
+            <option value="paypal">PayPal</option>
+            <option value="crypto">Cryptocurrency</option>
+          </select>
+        </div>
+        <div class="zelle-info" style="background:var(--accent-50);padding:12px;border-radius:8px;margin-top:12px;font-size:14px;">
+          <strong>Zelle Payment Details:</strong><br>
+          <strong>Name:</strong> ZHART LLC<br>
+          <strong>Phone:</strong> 2245844005
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Add Funds</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+const originalRows=[
+  {price:820,spots:2,lender:'USBANK',limit:18000,ageMonths:113,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:570,spots:2,lender:'USBANK',limit:16200,ageMonths:119,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:575,spots:2,lender:'USBANK',limit:19500,ageMonths:79,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:440,spots:2,lender:'USBANK',limit:10000,ageMonths:59,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:375,spots:2,lender:'USBANK',limit:2000,ageMonths:59,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:520.75,spots:2,lender:'USBANK',limit:24000,ageMonths:74,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:424,spots:2,lender:'USBANK',limit:7500,ageMonths:99,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:410,spots:2,lender:'USBANK',limit:10000,ageMonths:48,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:430,spots:2,lender:'USBANK',limit:13000,ageMonths:38,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:486.75,spots:2,lender:'USBANK',limit:14000,ageMonths:148,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:451.81,spots:2,lender:'USBANK',limit:15000,ageMonths:63,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:410,spots:2,lender:'USBANK',limit:10000,ageMonths:48,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:430,spots:2,lender:'USBANK',limit:10000,ageMonths:58,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:457,spots:2,lender:'USBANK',limit:18000,ageMonths:50,statementDay:'27th',posting:'Nov 3rd - Nov 11th'},
+  {price:465.50,spots:2,lender:'USBANK',limit:19600,ageMonths:36,statementDay:'27th',posting:'Nov 3rd - Nov 11th'},
+  {price:433,spots:2,lender:'USBANK',limit:15000,ageMonths:40,statementDay:'27th',posting:'Nov 3rd - Nov 11th'},
+  {price:512.68,spots:1,lender:'USBANK',limit:18000,ageMonths:106,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:529.25,spots:1,lender:'USBANK',limit:19500,ageMonths:130,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:423,spots:1,lender:'USBANK',limit:10000,ageMonths:117,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:415,spots:1,lender:'USBANK',limit:10000,ageMonths:65,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:415,spots:1,lender:'USBANK',limit:13500,ageMonths:50,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:465,spots:1,lender:'USBANK',limit:10000,ageMonths:62,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:470,spots:1,lender:'USBANK',limit:15000,ageMonths:97,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:450,spots:1,lender:'USBANK',limit:5000,ageMonths:101,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:521.26,spots:1,lender:'USBANK',limit:24000,ageMonths:78,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:605.75,spots:1,lender:'USBANK',limit:22000,ageMonths:156,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:433,spots:1,lender:'USBANK',limit:11500,ageMonths:62,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:510,spots:1,lender:'USBANK',limit:20000,ageMonths:35,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:542,spots:1,lender:'USBANK',limit:21400,ageMonths:99,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:499.50,spots:1,lender:'USBANK',limit:25000,ageMonths:38,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:245,spots:1,lender:'TD BANK',limit:1000,ageMonths:58,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:399.67,spots:1,lender:'PNC',limit:19000,ageMonths:49,statementDay:'24th',posting:'Oct 31st - Nov 8th'},
+  {price:374,spots:1,lender:'PNC',limit:15000,ageMonths:43,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:501.50,spots:1,lender:'PNC',limit:17500,ageMonths:119,statementDay:'27th',posting:'Nov 3rd - Nov 11th'},
+  {price:493,spots:1,lender:'PNC',limit:15000,ageMonths:137,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:595,spots:1,lender:'PNC',limit:20000,ageMonths:60,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:357,spots:1,lender:'PNC',limit:12000,ageMonths:53,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:346.50,spots:1,lender:'PNC',limit:6000,ageMonths:53,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:400.50,spots:1,lender:'PNC',limit:8000,ageMonths:150,statementDay:'04th',posting:'Nov 11th - Nov 19th'},
+  {price:386.75,spots:1,lender:'PNC',limit:17000,ageMonths:53,statementDay:'04th',posting:'Nov 11th - Nov 19th'},
+  {price:493,spots:1,lender:'PNC',limit:15000,ageMonths:105,statementDay:'06th',posting:'Nov 13th - Nov 21st'},
+  {price:505.75,spots:1,lender:'PNC',limit:17500,ageMonths:74,statementDay:'06th',posting:'Nov 13th - Nov 21st'},
+  {price:433.50,spots:1,lender:'PNC',limit:13000,ageMonths:117,statementDay:'06th',posting:'Nov 13th - Nov 21st'},
+  {price:650,spots:1,lender:'PNC',limit:24500,ageMonths:125,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:395,spots:1,lender:'PNC',limit:8500,ageMonths:53,statementDay:'13th',posting:'Nov 20th - Nov 28th'},
+  {price:454.75,spots:1,lender:'PNC',limit:15000,ageMonths:77,statementDay:'19th',posting:'Nov 26th - Dec 4th'},
+  {price:412.25,spots:2,lender:'ELAN',limit:24000,ageMonths:29,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:420,spots:2,lender:'ELAN',limit:19500,ageMonths:62,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:433.50,spots:2,lender:'ELAN',limit:25000,ageMonths:86,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:403.75,spots:2,lender:'ELAN',limit:17500,ageMonths:105,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:412.25,spots:2,lender:'ELAN',limit:25000,ageMonths:52,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:295,spots:2,lender:'ELAN',limit:4000,ageMonths:44,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:505.75,spots:2,lender:'ELAN',limit:25000,ageMonths:125,statementDay:'27th',posting:'Nov 3rd - Nov 11th'},
+  {price:490,spots:1,lender:'ELAN',limit:25000,ageMonths:57,statementDay:'25th',posting:'Nov 1st - Nov 9th'},
+  {price:476,spots:1,lender:'ELAN',limit:20000,ageMonths:143,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:845,spots:1,lender:'ELAN',limit:40000,ageMonths:180,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:517.50,spots:1,lender:'ELAN',limit:23400,ageMonths:135,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:472,spots:1,lender:'ELAN',limit:20000,ageMonths:164,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:374,spots:1,lender:'ELAN',limit:7500,ageMonths:161,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:403.75,spots:1,lender:'ELAN',limit:25000,ageMonths:40,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:387,spots:2,lender:'DISCOVER',limit:8500,ageMonths:35,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:314.50,spots:2,lender:'DISCOVER',limit:10000,ageMonths:99,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:629,spots:1,lender:'DISCOVER',limit:21200,ageMonths:121,statementDay:'23rd',posting:'Oct 30th - Nov 7th'},
+  {price:295,spots:1,lender:'DISCOVER',limit:3500,ageMonths:61,statementDay:'24th',posting:'Oct 31st - Nov 8th'},
+  {price:425,spots:1,lender:'DISCOVER',limit:14800,ageMonths:163,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:409.50,spots:1,lender:'DISCOVER',limit:11000,ageMonths:170,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:285,spots:1,lender:'DISCOVER',limit:3500,ageMonths:59,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:467.50,spots:1,lender:'DISCOVER',limit:19200,ageMonths:154,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:620,spots:1,lender:'DISCOVER',limit:22000,ageMonths:181,statementDay:'06th',posting:'Nov 13th - Nov 21st'},
+  {price:370.70,spots:1,lender:'DISCOVER',limit:8000,ageMonths:104,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:270,spots:1,lender:'DISCOVER',limit:8000,ageMonths:35,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:360,spots:1,lender:'DISCOVER',limit:12500,ageMonths:76,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:195,spots:1,lender:'DISCOVER',limit:8000,ageMonths:11,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:396.18,spots:1,lender:'DISCOVER',limit:8700,ageMonths:180,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:310,spots:1,lender:'DISCOVER',limit:5000,ageMonths:75,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:405,spots:1,lender:'DISCOVER',limit:12000,ageMonths:32,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:460,spots:1,lender:'DISCOVER',limit:15500,ageMonths:117,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:328.50,spots:1,lender:'DISCOVER',limit:8000,ageMonths:98,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:396,spots:1,lender:'DISCOVER',limit:6000,ageMonths:150,statementDay:'10th',posting:'Nov 17th - Nov 25th'},
+  {price:445.90,spots:1,lender:'DISCOVER',limit:14500,ageMonths:114,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:250,spots:1,lender:'DISCOVER',limit:3000,ageMonths:47,statementDay:'15th',posting:'Nov 22nd - Nov 30th'},
+  {price:270,spots:1,lender:'DISCOVER',limit:5000,ageMonths:47,statementDay:'15th',posting:'Nov 22nd - Nov 30th'},
+  {price:255,spots:1,lender:'DISCOVER',limit:3000,ageMonths:49,statementDay:'16th',posting:'Nov 23rd - Dec 1st'},
+  {price:770,spots:2,lender:'CITIBANK',limit:22800,ageMonths:263,statementDay:'20th',posting:'Oct 27th - Nov 4th'},
+  {price:595,spots:2,lender:'CITIBANK',limit:25500,ageMonths:117,statementDay:'20th',posting:'Oct 27th - Nov 4th'},
+  {price:750.40,spots:2,lender:'CITIBANK',limit:23000,ageMonths:235,statementDay:'27th',posting:'Nov 3rd - Nov 11th'},
+  {price:455.10,spots:2,lender:'CITIBANK',limit:12000,ageMonths:155,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:670,spots:2,lender:'CITIBANK',limit:19000,ageMonths:202,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:410.10,spots:2,lender:'CITIBANK',limit:12500,ageMonths:110,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:430,spots:2,lender:'CITIBANK',limit:13500,ageMonths:126,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:620,spots:2,lender:'CITIBANK',limit:11300,ageMonths:116,statementDay:'03rd',posting:'Nov 10th - Nov 18th'},
+  {price:365,spots:2,lender:'CITIBANK',limit:6800,ageMonths:106,statementDay:'04th',posting:'Nov 11th - Nov 19th'},
+  {price:475,spots:2,lender:'CITIBANK',limit:22000,ageMonths:80,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:285,spots:2,lender:'CITIBANK',limit:2000,ageMonths:89,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:495,spots:2,lender:'CITIBANK',limit:19000,ageMonths:105,statementDay:'10th',posting:'Nov 17th - Nov 25th'},
+  {price:740,spots:2,lender:'CITIBANK',limit:24160,ageMonths:254,statementDay:'13th',posting:'Nov 20th - Nov 28th'},
+  {price:350.50,spots:2,lender:'CITIBANK',limit:9400,ageMonths:83,statementDay:'13th',posting:'Nov 20th - Nov 28th'},
+  {price:550,spots:2,lender:'CITIBANK',limit:15180,ageMonths:170,statementDay:'16th',posting:'Nov 23rd - Dec 1st'},
+  {price:490.10,spots:2,lender:'CITIBANK',limit:15960,ageMonths:91,statementDay:'17th',posting:'Nov 24th - Dec 2nd'},
+  {price:515,spots:2,lender:'CITIBANK',limit:20000,ageMonths:112,statementDay:'19th',posting:'Nov 26th - Dec 4th'},
+  {price:500,spots:2,lender:'CITIBANK',limit:17700,ageMonths:43,statementDay:'19th',posting:'Nov 26th - Dec 4th'},
+  {price:450.20,spots:1,lender:'CITIBANK',limit:14500,ageMonths:123,statementDay:'21st',posting:'Oct 28th - Nov 5th'},
+  {price:560,spots:1,lender:'CITIBANK',limit:22500,ageMonths:133,statementDay:'21st',posting:'Oct 28th - Nov 5th'},
+  {price:600,spots:1,lender:'CITIBANK',limit:27000,ageMonths:111,statementDay:'21st',posting:'Oct 28th - Nov 5th'},
+  {price:360,spots:1,lender:'CITIBANK',limit:11600,ageMonths:26,statementDay:'23rd',posting:'Oct 30th - Nov 7th'},
+  {price:910,spots:1,lender:'CITIBANK',limit:40000,ageMonths:130,statementDay:'24th',posting:'Oct 31st - Nov 8th'},
+  {price:374,spots:1,lender:'CITIBANK',limit:14000,ageMonths:131,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:580,spots:1,lender:'CITIBANK',limit:30400,ageMonths:91,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:590,spots:1,lender:'CITIBANK',limit:34500,ageMonths:91,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:460,spots:1,lender:'CITIBANK',limit:16800,ageMonths:109,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:555.30,spots:1,lender:'CITIBANK',limit:33100,ageMonths:77,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:500.90,spots:1,lender:'CITIBANK',limit:19500,ageMonths:108,statementDay:'04th',posting:'Nov 11th - Nov 19th'},
+  {price:610,spots:1,lender:'CITIBANK',limit:21200,ageMonths:170,statementDay:'05th',posting:'Nov 12th - Nov 20th'},
+  {price:580.50,spots:1,lender:'CITIBANK',limit:16020,ageMonths:248,statementDay:'06th',posting:'Nov 13th - Nov 21st'},
+  {price:590.10,spots:1,lender:'CITIBANK',limit:20500,ageMonths:181,statementDay:'06th',posting:'Nov 13th - Nov 21st'},
+  {price:585,spots:1,lender:'CITIBANK',limit:25000,ageMonths:116,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:660.90,spots:1,lender:'CITIBANK',limit:28000,ageMonths:164,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:405,spots:1,lender:'CITIBANK',limit:22000,ageMonths:43,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:360.60,spots:1,lender:'CITIBANK',limit:6600,ageMonths:104,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:440.20,spots:1,lender:'CITIBANK',limit:21000,ageMonths:96,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:350,spots:1,lender:'CITIBANK',limit:4900,ageMonths:56,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:560.60,spots:1,lender:'CITIBANK',limit:22000,ageMonths:131,statementDay:'10th',posting:'Nov 17th - Nov 25th'},
+  {price:335,spots:1,lender:'CITIBANK',limit:7300,ageMonths:87,statementDay:'12th',posting:'Nov 19th - Nov 27th'},
+  {price:460,spots:1,lender:'CITIBANK',limit:15300,ageMonths:126,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:675,spots:1,lender:'CITIBANK',limit:18500,ageMonths:244,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:600,spots:1,lender:'CITIBANK',limit:12000,ageMonths:104,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:570,spots:1,lender:'CITIBANK',limit:24500,ageMonths:110,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:450.90,spots:1,lender:'CITIBANK',limit:19400,ageMonths:92,statementDay:'15th',posting:'Nov 22nd - Nov 30th'},
+  {price:390.20,spots:1,lender:'CITIBANK',limit:14000,ageMonths:62,statementDay:'18th',posting:'Nov 25th - Dec 3rd'},
+  {price:385,spots:1,lender:'CITIBANK',limit:10100,ageMonths:123,statementDay:'19th',posting:'Nov 26th - Dec 4th'},
+  {price:727,spots:2,lender:'CHASE',limit:15500,ageMonths:206,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:670,spots:2,lender:'CHASE',limit:29700,ageMonths:58,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:499.50,spots:2,lender:'CHASE',limit:20231,ageMonths:58,statementDay:'03rd',posting:'Nov 10th - Nov 18th'},
+  {price:603,spots:2,lender:'CHASE',limit:26000,ageMonths:25,statementDay:'04th',posting:'Nov 11th - Nov 19th'},
+  {price:565.25,spots:2,lender:'CHASE',limit:21000,ageMonths:143,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:705,spots:2,lender:'CHASE',limit:27800,ageMonths:134,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:625.50,spots:2,lender:'CHASE',limit:28800,ageMonths:110,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:545.40,spots:2,lender:'CHASE',limit:19000,ageMonths:84,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:569.50,spots:2,lender:'CHASE',limit:25000,ageMonths:108,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:700,spots:2,lender:'CHASE',limit:26900,ageMonths:124,statementDay:'11th',posting:'Nov 18th - Nov 26th'},
+  {price:480,spots:2,lender:'CHASE',limit:8500,ageMonths:105,statementDay:'12th',posting:'Nov 19th - Nov 27th'},
+  {price:530,spots:2,lender:'CHASE',limit:18200,ageMonths:28,statementDay:'12th',posting:'Nov 19th - Nov 27th'},
+  {price:446.25,spots:2,lender:'CHASE',limit:16000,ageMonths:87,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:513,spots:2,lender:'CHASE',limit:23000,ageMonths:62,statementDay:'15th',posting:'Nov 22nd - Nov 30th'},
+  {price:480,spots:2,lender:'CHASE',limit:4500,ageMonths:93,statementDay:'19th',posting:'Nov 26th - Dec 4th'},
+  {price:459.34,spots:1,lender:'CHASE',limit:20000,ageMonths:73,statementDay:'20th',posting:'Oct 27th - Nov 4th'},
+  {price:578,spots:1,lender:'CHASE',limit:24355,ageMonths:130,statementDay:'22nd',posting:'Oct 29th - Nov 6th'},
+  {price:560.40,spots:1,lender:'CHASE',limit:20500,ageMonths:82,statementDay:'22nd',posting:'Oct 29th - Nov 6th'},
+  {price:505,spots:1,lender:'CHASE',limit:15200,ageMonths:48,statementDay:'23rd',posting:'Oct 30th - Nov 7th'},
+  {price:690,spots:1,lender:'CHASE',limit:21000,ageMonths:26,statementDay:'24th',posting:'Oct 31st - Nov 8th'},
+  {price:530,spots:1,lender:'CHASE',limit:8500,ageMonths:146,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:607.50,spots:1,lender:'CHASE',limit:31200,ageMonths:50,statementDay:'27th',posting:'Nov 3rd - Nov 11th'},
+  {price:1206,spots:1,lender:'CHASE',limit:69000,ageMonths:119,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:934,spots:1,lender:'CHASE',limit:25000,ageMonths:224,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:648,spots:1,lender:'CHASE',limit:30500,ageMonths:122,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:993.65,spots:1,lender:'CHASE',limit:41000,ageMonths:216,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:599.25,spots:1,lender:'CHASE',limit:26000,ageMonths:131,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:570,spots:1,lender:'CHASE',limit:13300,ageMonths:128,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:685,spots:1,lender:'CHASE',limit:15300,ageMonths:175,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:745,spots:1,lender:'CHASE',limit:21845,ageMonths:158,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:656,spots:1,lender:'CHASE',limit:26805,ageMonths:107,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:459,spots:1,lender:'CHASE',limit:16700,ageMonths:79,statementDay:'03rd',posting:'Nov 10th - Nov 18th'},
+  {price:526.50,spots:1,lender:'CHASE',limit:18600,ageMonths:117,statementDay:'03rd',posting:'Nov 10th - Nov 18th'},
+  {price:675,spots:1,lender:'CHASE',limit:34000,ageMonths:94,statementDay:'03rd',posting:'Nov 10th - Nov 18th'},
+  {price:585.18,spots:1,lender:'CHASE',limit:24000,ageMonths:90,statementDay:'06th',posting:'Nov 13th - Nov 21st'},
+  {price:629,spots:1,lender:'CHASE',limit:32500,ageMonths:106,statementDay:'06th',posting:'Nov 13th - Nov 21st'},
+  {price:567,spots:1,lender:'CHASE',limit:14500,ageMonths:160,statementDay:'06th',posting:'Nov 13th - Nov 21st'},
+  {price:569.50,spots:1,lender:'CHASE',limit:25000,ageMonths:27,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:765,spots:1,lender:'CHASE',limit:41800,ageMonths:85,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:790,spots:1,lender:'CHASE',limit:28000,ageMonths:88,statementDay:'11th',posting:'Nov 18th - Nov 26th'},
+  {price:550,spots:1,lender:'CHASE',limit:17800,ageMonths:94,statementDay:'13th',posting:'Nov 20th - Nov 28th'},
+  {price:725,spots:1,lender:'CHASE',limit:14100,ageMonths:211,statementDay:'15th',posting:'Nov 22nd - Nov 30th'},
+  {price:607.75,spots:1,lender:'CHASE',limit:10000,ageMonths:214,statementDay:'15th',posting:'Nov 22nd - Nov 30th'},
+  {price:436.50,spots:1,lender:'CHASE',limit:12300,ageMonths:83,statementDay:'17th',posting:'Nov 24th - Dec 2nd'},
+  {price:603.50,spots:1,lender:'CHASE',limit:28800,ageMonths:124,statementDay:'19th',posting:'Nov 26th - Dec 4th'},
+  {price:405,spots:2,lender:'CAPITAL ONE',limit:5000,ageMonths:105,statementDay:'20th',posting:'Oct 27th - Nov 4th'},
+  {price:369,spots:2,lender:'CAPITAL ONE',limit:9500,ageMonths:52,statementDay:'12th',posting:'Nov 19th - Nov 27th'},
+  {price:484.50,spots:1,lender:'CAPITAL ONE',limit:15000,ageMonths:85,statementDay:'27th',posting:'Nov 3rd - Nov 11th'},
+  {price:463.25,spots:1,lender:'CAPITAL ONE',limit:8250,ageMonths:147,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:548.25,spots:1,lender:'CAPITAL ONE',limit:30000,ageMonths:45,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:684.25,spots:1,lender:'CAPITAL ONE',limit:40500,ageMonths:69,statementDay:'11th',posting:'Nov 18th - Nov 26th'},
+  {price:414,spots:1,lender:'CAPITAL ONE',limit:11000,ageMonths:52,statementDay:'13th',posting:'Nov 20th - Nov 28th'},
+  {price:405,spots:1,lender:'CAPITAL ONE',limit:10000,ageMonths:37,statementDay:'18th',posting:'Nov 25th - Dec 3rd'},
+  {price:351,spots:3,lender:'BARCLAYS',limit:10000,ageMonths:113,statementDay:'23rd',posting:'Oct 30th - Nov 7th'},
+  {price:401.20,spots:3,lender:'BARCLAYS',limit:25500,ageMonths:74,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:337.50,spots:2,lender:'BARCLAYS',limit:13000,ageMonths:59,statementDay:'23rd',posting:'Oct 30th - Nov 7th'},
+  {price:319.50,spots:2,lender:'BARCLAYS',limit:3000,ageMonths:126,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:510.17,spots:2,lender:'BARCLAYS',limit:27000,ageMonths:114,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:382.50,spots:2,lender:'BARCLAYS',limit:20500,ageMonths:62,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:385,spots:2,lender:'BARCLAYS',limit:16700,ageMonths:44,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:315,spots:2,lender:'BARCLAYS',limit:3019,ageMonths:78,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:364.50,spots:2,lender:'BARCLAYS',limit:14500,ageMonths:88,statementDay:'03rd',posting:'Nov 10th - Nov 18th'},
+  {price:355.50,spots:2,lender:'BARCLAYS',limit:12000,ageMonths:97,statementDay:'03rd',posting:'Nov 10th - Nov 18th'},
+  {price:420.75,spots:2,lender:'BARCLAYS',limit:27500,ageMonths:56,statementDay:'05th',posting:'Nov 12th - Nov 20th'},
+  {price:395.25,spots:2,lender:'BARCLAYS',limit:27500,ageMonths:46,statementDay:'05th',posting:'Nov 12th - Nov 20th'},
+  {price:365.50,spots:2,lender:'BARCLAYS',limit:18000,ageMonths:57,statementDay:'05th',posting:'Nov 12th - Nov 20th'},
+  {price:185,spots:2,lender:'BARCLAYS',limit:1500,ageMonths:18,statementDay:'05th',posting:'Nov 12th - Nov 20th'},
+  {price:607.75,spots:2,lender:'BARCLAYS',limit:41500,ageMonths:32,statementDay:'05th',posting:'Nov 12th - Nov 20th'},
+  {price:370,spots:2,lender:'BARCLAYS',limit:3019,ageMonths:101,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:399.50,spots:2,lender:'BARCLAYS',limit:21000,ageMonths:75,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:346.50,spots:2,lender:'BARCLAYS',limit:15300,ageMonths:47,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:301.50,spots:2,lender:'BARCLAYS',limit:8000,ageMonths:74,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:565.25,spots:2,lender:'BARCLAYS',limit:33000,ageMonths:142,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:420,spots:2,lender:'BARCLAYS',limit:25000,ageMonths:28,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:297,spots:2,lender:'BARCLAYS',limit:7500,ageMonths:80,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:459.76,spots:2,lender:'BARCLAYS',limit:31100,ageMonths:61,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:305.20,spots:2,lender:'BARCLAYS',limit:5000,ageMonths:61,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:351,spots:2,lender:'BARCLAYS',limit:22500,ageMonths:30,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:386.75,spots:2,lender:'BARCLAYS',limit:20000,ageMonths:71,statementDay:'10th',posting:'Nov 17th - Nov 25th'},
+  {price:375,spots:2,lender:'BARCLAYS',limit:12800,ageMonths:90,statementDay:'13th',posting:'Nov 20th - Nov 28th'},
+  {price:320,spots:2,lender:'BARCLAYS',limit:3019,ageMonths:82,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:807.50,spots:2,lender:'BARCLAYS',limit:47000,ageMonths:95,statementDay:'15th',posting:'Nov 22nd - Nov 30th'},
+  {price:315,spots:2,lender:'BARCLAYS',limit:10000,ageMonths:37,statementDay:'16th',posting:'Nov 23rd - Dec 1st'},
+  {price:782,spots:2,lender:'BARCLAYS',limit:58000,ageMonths:32,statementDay:'17th',posting:'Nov 24th - Dec 2nd'},
+  {price:590.75,spots:2,lender:'BARCLAYS',limit:38800,ageMonths:32,statementDay:'18th',posting:'Nov 25th - Dec 3rd'},
+  {price:333,spots:2,lender:'BARCLAYS',limit:5019,ageMonths:101,statementDay:'19th',posting:'Nov 26th - Dec 4th'},
+  {price:497.50,spots:1,lender:'BARCLAYS',limit:25000,ageMonths:114,statementDay:'20th',posting:'Oct 27th - Nov 4th'},
+  {price:395.25,spots:1,lender:'BARCLAYS',limit:19000,ageMonths:82,statementDay:'20th',posting:'Oct 27th - Nov 4th'},
+  {price:471.75,spots:1,lender:'BARCLAYS',limit:25000,ageMonths:107,statementDay:'21st',posting:'Oct 28th - Nov 5th'},
+  {price:399.50,spots:1,lender:'BARCLAYS',limit:21000,ageMonths:77,statementDay:'21st',posting:'Oct 28th - Nov 5th'},
+  {price:423,spots:1,lender:'BARCLAYS',limit:20500,ageMonths:89,statementDay:'23rd',posting:'Oct 30th - Nov 7th'},
+  {price:567,spots:1,lender:'BARCLAYS',limit:30900,ageMonths:95,statementDay:'24th',posting:'Oct 31st - Nov 8th'},
+  {price:527,spots:1,lender:'BARCLAYS',limit:30000,ageMonths:95,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:675.75,spots:1,lender:'BARCLAYS',limit:40250,ageMonths:90,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:361.25,spots:1,lender:'BARCLAYS',limit:16000,ageMonths:85,statementDay:'28th',posting:'Nov 4th - Nov 12th'},
+  {price:501.50,spots:1,lender:'BARCLAYS',limit:24000,ageMonths:123,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:510,spots:1,lender:'BARCLAYS',limit:33900,ageMonths:42,statementDay:'01st',posting:'Nov 8th - Nov 16th'},
+  {price:450,spots:1,lender:'BARCLAYS',limit:22500,ageMonths:57,statementDay:'02nd',posting:'Nov 9th - Nov 17th'},
+  {price:414.81,spots:1,lender:'BARCLAYS',limit:16000,ageMonths:105,statementDay:'03rd',posting:'Nov 10th - Nov 18th'},
+  {price:463.76,spots:1,lender:'BARCLAYS',limit:21500,ageMonths:98,statementDay:'04th',posting:'Nov 11th - Nov 19th'},
+  {price:403.75,spots:1,lender:'BARCLAYS',limit:25500,ageMonths:35,statementDay:'04th',posting:'Nov 11th - Nov 19th'},
+  {price:386.75,spots:1,lender:'BARCLAYS',limit:16500,ageMonths:97,statementDay:'05th',posting:'Nov 12th - Nov 20th'},
+  {price:320,spots:1,lender:'BARCLAYS',limit:3019,ageMonths:83,statementDay:'05th',posting:'Nov 12th - Nov 20th'},
+  {price:323,spots:1,lender:'BARCLAYS',limit:16500,ageMonths:27,statementDay:'05th',posting:'Nov 12th - Nov 20th'},
+  {price:465,spots:1,lender:'BARCLAYS',limit:20000,ageMonths:86,statementDay:'06th',posting:'Nov 13th - Nov 21st'},
+  {price:288,spots:1,lender:'BARCLAYS',limit:3019,ageMonths:81,statementDay:'07th',posting:'Nov 14th - Nov 22nd'},
+  {price:569.50,spots:1,lender:'BARCLAYS',limit:31019,ageMonths:104,statementDay:'08th',posting:'Nov 15th - Nov 23rd'},
+  {price:365,spots:1,lender:'BARCLAYS',limit:11772,ageMonths:75,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:590.75,spots:1,lender:'BARCLAYS',limit:35000,ageMonths:90,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:387,spots:1,lender:'BARCLAYS',limit:25000,ageMonths:27,statementDay:'09th',posting:'Nov 16th - Nov 24th'},
+  {price:342,spots:1,lender:'BARCLAYS',limit:17000,ageMonths:26,statementDay:'10th',posting:'Nov 17th - Nov 25th'},
+  {price:437.04,spots:1,lender:'BARCLAYS',limit:23000,ageMonths:69,statementDay:'11th',posting:'Nov 18th - Nov 26th'},
+  {price:445,spots:1,lender:'BARCLAYS',limit:14000,ageMonths:136,statementDay:'13th',posting:'Nov 20th - Nov 28th'},
+  {price:620,spots:1,lender:'BARCLAYS',limit:31000,ageMonths:74,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:441,spots:1,lender:'BARCLAYS',limit:24000,ageMonths:68,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:423,spots:1,lender:'BARCLAYS',limit:25000,ageMonths:45,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:200,spots:1,lender:'BARCLAYS',limit:15000,ageMonths:22,statementDay:'14th',posting:'Nov 21st - Nov 29th'},
+  {price:455.43,spots:1,lender:'BARCLAYS',limit:20019,ageMonths:114,statementDay:'18th',posting:'Nov 25th - Dec 3rd'},
+  {price:414,spots:1,lender:'BARCLAYS',limit:20000,ageMonths:73,statementDay:'19th',posting:'Nov 26th - Dec 4th'},
+  {price:405,spots:1,lender:'BARCLAYS',limit:15000,ageMonths:128,statementDay:'19th',posting:'Nov 26th - Dec 4th'},
+  {price:616.50,spots:1,lender:'Bank of America',limit:20100,ageMonths:112,statementDay:'26th',posting:'Nov 2nd - Nov 10th'},
+  {price:442,spots:1,lender:'Bank of America',limit:21500,ageMonths:29,statementDay:'05th',posting:'Nov 12th - Nov 20th'},
+  {price:420.75,spots:1,lender:'Bank of America',limit:14500,ageMonths:97,statementDay:'06th',posting:'Nov 13th - Nov 21st'}
+]
+
+const rows = originalRows.map(item => ({
+  ...item,
+  price: item.price + 100
+}));
+
+const tbody=document.querySelector('#linesTable tbody')
+const totalCount=document.getElementById('totalCount')
+let sortState={key:null,asc:true}
+
+let currentUser = null;
+let users = JSON.parse(localStorage.getItem('tradelineUsers')) || [];
+let userOrders = JSON.parse(localStorage.getItem('userOrders')) || [];
+
+let cart = [];
+const cartModal = document.getElementById('cartModal');
+const cartCount = document.getElementById('cartCount');
+const cartItems = document.getElementById('cartItems');
+const cartTotal = document.getElementById('cartTotal');
+
+
+function formatMoney(v){return '$'+v.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})}
+function formatLimit(v){return '$'+v.toLocaleString()}
+function formatAge(months){const y=Math.floor(months/12),m=months%12;return `${y} ${y===1?'year':'years'} ${m} ${m===1?'month':'months'}`}
+
+function registerUser(userData) {
+  if (users.find(user => user.email === userData.email)) {
+    return { success: false, message: 'User with this email already exists' };
+  }
+  
+  if (users.find(user => user.phone === userData.phone)) {
+    return { success: false, message: 'User with this phone number already exists' };
+  }
+  
+  if (userData.password !== userData.confirmPassword) {
+    return { success: false, message: 'Passwords do not match' };
+  }
+  
+  const newUser = {
+    id: Date.now(),
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    phone: userData.phone,
+    email: userData.email,
+    password: userData.password,
+    createdAt: new Date().toISOString()
+  };
+  
+  users.push(newUser);
+  localStorage.setItem('tradelineUsers', JSON.stringify(users));
+  
+  return { success: true, message: 'Registration successful!' };
+}
+
+function loginUser(email, phone, password) {
+  const user = users.find(u => u.email === email && u.phone === phone && u.password === password);
+  
+  if (user) {
+    currentUser = user;
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    return { success: true, message: 'Login successful!' };
+  } else {
+    return { success: false, message: 'Invalid email, phone number or password' };
+  }
+}
+
+function logoutUser() {
+  currentUser = null;
+  localStorage.removeItem('currentUser');
+  updateAuthUI();
+}
+
+function updateAuthUI() {
+  const userInfo = document.getElementById('userInfo');
+  const authButtons = document.getElementById('authButtons');
+  const userName = document.getElementById('userName');
+  
+  if (currentUser) {
+    userInfo.style.display = 'flex';
+    authButtons.style.display = 'none';
+    userName.textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+  } else {
+    userInfo.style.display = 'none';
+    authButtons.style.display = 'flex';
+  }
+}
+
+function showNotification(message, isError = false) {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed; top: 20px; right: 20px; z-index: 1001;
+    background: ${isError ? 'var(--danger)' : 'var(--accent)'}; color: white; padding: 12px 20px;
+    border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  `;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
+
+
+function addOrder(orderData) {
+  const order = {
+    id: Date.now(),
+    userId: currentUser.id,
+    items: orderData.items,
+    total: orderData.total,
+    date: new Date().toISOString(),
+    status: 'completed'
+  };
+  userOrders.push(order);
+  localStorage.setItem('userOrders', JSON.stringify(userOrders));
+}
+
+function loadUserOrders() {
+  if (!currentUser) return [];
+  return userOrders.filter(order => order.userId === currentUser.id);
+}
+
+function updateProfileDisplay() {
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  
+  document.getElementById('cartItemsCount').textContent = totalItems;
+  document.getElementById('cartTotalAmount').textContent = totalAmount.toFixed(2);
+  
+  const orders = loadUserOrders();
+  const ordersList = document.getElementById('ordersList');
+  if (orders.length === 0) {
+    ordersList.innerHTML = '<p class="no-data">No orders yet</p>';
+  } else {
+    ordersList.innerHTML = orders.map(order => `
+      <div class="order-item">
+        <div class="order-info">
+          <div><strong>Order #${order.id}</strong></div>
+          <div class="order-date">${new Date(order.date).toLocaleDateString()}</div>
+        </div>
+        <div class="order-amount">$${order.total.toFixed(2)}</div>
+      </div>
+    `).join('');
+  }
+  
+}
+
+function addToCart(item) {
+  const existingItem = cart.find(cartItem => 
+    cartItem.lender === item.lender && 
+    cartItem.limit === item.limit && 
+    cartItem.statementDay === item.statementDay
+  );
+  
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    cart.push({...item, quantity: 1});
+  }
+  
+  updateCartDisplay();
+  showCartNotification();
+  
+  if (document.getElementById('profileModal').style.display === 'block') {
+    updateProfileDisplay();
+  }
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  updateCartDisplay();
+  
+  if (document.getElementById('profileModal').style.display === 'block') {
+    updateProfileDisplay();
+  }
+}
+
+function clearCart() {
+  cart = [];
+  updateCartDisplay();
+  
+  if (document.getElementById('profileModal').style.display === 'block') {
+    updateProfileDisplay();
+  }
+}
+
+function updateCartDisplay() {
+  cartCount.textContent = cart.length;
+  
+  if (cart.length === 0) {
+    cartItems.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">Cart is empty</p>';
+    cartTotal.textContent = '0.00';
+    return;
+  }
+  
+  let total = 0;
+  cartItems.innerHTML = cart.map((item, index) => {
+    const itemTotal = item.price * item.quantity;
+    total += itemTotal;
+    return `
+      <div class="cart-item">
+        <div class="cart-item-info">
+          <div><strong>${item.lender}</strong> - ${formatLimit(item.limit)}</div>
+          <div class="muted">${item.statementDay} • ${item.posting} • ${formatAge(item.ageMonths)}</div>
+          <div>Quantity: ${item.quantity}</div>
+        </div>
+        <div>
+          <div class="cart-item-price">${formatMoney(itemTotal)}</div>
+          <button class="cart-item-remove" onclick="removeFromCart(${index})">Remove</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  cartTotal.textContent = total.toFixed(2);
+}
+
+function showCartNotification() {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed; top: 20px; right: 20px; z-index: 1001;
+    background: var(--accent); color: white; padding: 12px 20px;
+    border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  `;
+  notification.textContent = 'Item added to cart!';
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
+
+function render(data){
+  console.log('Rendering data:', data.length, 'rows');
+  if (!tbody) {
+    console.error('tbody element not found!');
+    return;
+  }
+  tbody.innerHTML='';
+  data.forEach((r, index)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${r.lender}<br><small class="muted">${r.spots} spots</small></td>
+      <td>${formatLimit(r.limit)}</td>
+      <td>${r.statementDay}</td>
+      <td>${r.posting}</td>
+      <td>${formatAge(r.ageMonths)}</td>
+      <td>${formatMoney(r.price)}</td>
+      <td><span class="tag">${r.spots}</span></td>
+      <td><button class="btn" onclick="addToCart(${JSON.stringify(r).replace(/"/g, '&quot;')})">Add</button></td>`;
+    tbody.appendChild(tr);
+  });
+  if (totalCount) {
+    totalCount.textContent=data.length;
+  }
+  console.log('Render completed. tbody children count:', tbody.children.length);
+}
+
+function sortBy(key){if(sortState.key===key){sortState.asc=!sortState.asc}else{sortState={key,asc:true}}
+  const sorted=[...filteredRows()].sort((a,b)=>{let va=a[key],vb=b[key];
+    if(typeof va==='string'){va=va.toLowerCase();vb=vb.toLowerCase()}
+    if(va<vb)return sortState.asc?-1:1
+    if(va>vb)return sortState.asc?1:-1
+    return 0
+  })
+  render(sorted)
+}
+
+function parseRange(val){if(!val)return null; const trimmed=val.trim();if(trimmed.endsWith('+')){const num=parseInt(trimmed.replace('+','').trim());return{min:num,max:Infinity}} const [min,max]=trimmed.split('-').map(x=>parseInt(x.trim()));return{min,max}}
+
+function inRange(value,range){if(!range)return true;return value>=range.min&&value<=range.max}
+
+function filterData(){const q=document.getElementById('searchInput').value.trim().toLowerCase()
+  const priceR=parseRange(document.getElementById('priceSelect').value.replace(/[$ ,]/g,'').replace(' +','+') )
+  const limitR=parseRange(document.getElementById('limitSelect').value.replace(/[$ ,]/g,'').replace(' +','+') )
+  const ageR=document.getElementById('ageSelect').value.replace(' +','+')
+  let ageRange=ageR?parseRange(ageR):null
+  if(ageRange){
+    ageRange={min:ageRange.min*12,max:ageRange.max===Infinity?Infinity:ageRange.max*12}
+  }
+  const spots=document.getElementById('spotsSelect').value
+  const lender=document.getElementById('lenderSelect').value
+  const statement=document.getElementById('statementSelect').value
+  const posting=document.getElementById('postingInput').value.trim().toLowerCase()
+  return rows.filter(r=>{
+    const ageOk=!ageRange||inRange(r.ageMonths,ageRange)
+    const priceOk=!priceR||inRange(r.price,priceR)
+    const limitOk=!limitR||inRange(r.limit,limitR)
+    const spotsOk=!spots||String(r.spots)===spots
+    const lenderOk=!lender||r.lender===lender
+    const statOk=!statement||r.statementDay===statement
+    const postOk=!posting||r.posting.toLowerCase().includes(posting)
+    const qOk=!q||[r.lender,formatLimit(r.limit),r.statementDay,r.posting].join(' ').toLowerCase().includes(q)
+    return ageOk&&priceOk&&limitOk&&spotsOk&&lenderOk&&statOk&&postOk&&qOk
+  })
+}
+
+function filteredRows(){return filterData()}
+
+document.querySelectorAll('th.sortable').forEach(th=>{th.addEventListener('click',()=>sortBy(th.dataset.key))})
+
+// Автоматическое применение фильтров
+document.getElementById('searchInput').addEventListener('input',()=>render(filterData()))
+document.getElementById('lenderSelect').addEventListener('change',()=>render(filterData()))
+document.getElementById('limitSelect').addEventListener('change',()=>render(filterData()))
+document.getElementById('statementSelect').addEventListener('change',()=>render(filterData()))
+document.getElementById('postingInput').addEventListener('input',()=>render(filterData()))
+document.getElementById('ageSelect').addEventListener('change',()=>render(filterData()))
+document.getElementById('priceSelect').addEventListener('change',()=>render(filterData()))
+document.getElementById('spotsSelect').addEventListener('change',()=>render(filterData()))
+
+document.getElementById('resetFilters').addEventListener('click',()=>{
+  document.querySelectorAll('input,select').forEach(el=>{if(el.id!=='resetFilters')el.value=''})
+  sortState={key:null,asc:true};render(rows)
+})
+
+// Обработчики событий для корзины
+document.getElementById('cartIcon').addEventListener('click', () => {
+  cartModal.style.display = 'block';
+  updateCartDisplay();
+});
+
+document.getElementById('closeCart').addEventListener('click', () => {
+  cartModal.style.display = 'none';
+});
+
+document.getElementById('clearCart').addEventListener('click', () => {
+  clearCart();
+});
+
+document.getElementById('checkout').addEventListener('click', () => {
+  if (cart.length === 0) {
+    alert('Cart is empty!');
+    return;
+  }
+  
+  if (!currentUser) {
+    cartModal.style.display = 'none';
+    showNotification('You need to login to place an order', true);
+    setTimeout(() => {
+      document.getElementById('loginModal').style.display = 'block';
+    }, 1000);
+    return;
+  }
+  
+  let orderText = `🛒 *TRADELINE.SHOP Order*\n\n`;
+  orderText += `👤 *Customer Details:*\n`;
+  orderText += `   📝 Name: ${currentUser.firstName} ${currentUser.lastName}\n`;
+  orderText += `   📞 Phone: ${currentUser.phone}\n`;
+  orderText += `   📧 Email: ${currentUser.email}\n\n`;
+  orderText += `💰 *Total Amount: $${cartTotal.textContent}*\n\n`;
+  orderText += `📋 *Items:*\n`;
+  
+  cart.forEach((item, index) => {
+    orderText += `${index + 1}. *${item.lender}*\n`;
+    orderText += `   💳 Limit: ${formatLimit(item.limit)}\n`;
+    orderText += `   📅 Statement Day: ${item.statementDay}\n`;
+    orderText += `   📆 Posting: ${item.posting}\n`;
+    orderText += `   ⏰ Age: ${formatAge(item.ageMonths)}\n`;
+    orderText += `   🔢 Spots: ${item.spots}\n`;
+    orderText += `   💵 Price: ${formatMoney(item.price)} x ${item.quantity} = ${formatMoney(item.price * item.quantity)}\n\n`;
+  });
+  
+  orderText += `\n📞 Contact me to complete the order!`;
+  
+  const telegramUrl = `https://t.me/lasardinia?text=${encodeURIComponent(orderText)}`;
+  
+  window.open(telegramUrl, '_blank');
+  
+  addOrder({
+    items: cart.map(item => ({
+      lender: item.lender,
+      limit: item.limit,
+      statementDay: item.statementDay,
+      posting: item.posting,
+      ageMonths: item.ageMonths,
+      spots: item.spots,
+      price: item.price,
+      quantity: item.quantity
+    })),
+    total: parseFloat(cartTotal.textContent)
+  });
+  
+  clearCart();
+  cartModal.style.display = 'none';
+  
+  showNotification('Order sent to Telegram!');
+});
+
+window.addEventListener('click', (event) => {
+  if (event.target === cartModal) {
+    cartModal.style.display = 'none';
+  }
+});
+
+document.getElementById('loginBtn').addEventListener('click', () => {
+  document.getElementById('loginModal').style.display = 'block';
+});
+
+document.getElementById('registerBtn').addEventListener('click', () => {
+  document.getElementById('registerModal').style.display = 'block';
+});
+
+document.getElementById('showRegister').addEventListener('click', () => {
+  document.getElementById('loginModal').style.display = 'none';
+  document.getElementById('registerModal').style.display = 'block';
+});
+
+document.getElementById('showLogin').addEventListener('click', () => {
+  document.getElementById('registerModal').style.display = 'none';
+  document.getElementById('loginModal').style.display = 'block';
+});
+
+document.getElementById('closeLogin').addEventListener('click', () => {
+  document.getElementById('loginModal').style.display = 'none';
+});
+
+document.getElementById('closeRegister').addEventListener('click', () => {
+  document.getElementById('registerModal').style.display = 'none';
+});
+
+document.getElementById('profileBtn').addEventListener('click', () => {
+  updateProfileDisplay();
+  document.getElementById('profileModal').style.display = 'block';
+});
+
+document.getElementById('closeProfile').addEventListener('click', () => {
+  document.getElementById('profileModal').style.display = 'none';
+});
+
+document.getElementById('sendConfirmationBtn').addEventListener('click', () => {
+  if (cart.length === 0) {
+    showNotification('Cart is empty!', true);
+    return;
+  }
+  
+  if (!currentUser) {
+    showNotification('Please login first', true);
+    return;
+  }
+  
+  let confirmationText = `🛒 *TRADELINE.SHOP Payment Confirmation*\n\n`;
+  confirmationText += `👤 *Customer Details:*\n`;
+  confirmationText += `   📝 Name: ${currentUser.firstName} ${currentUser.lastName}\n`;
+  confirmationText += `   📞 Phone: ${currentUser.phone}\n`;
+  confirmationText += `   📧 Email: ${currentUser.email}\n\n`;
+  
+  const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  confirmationText += `💰 *Total Amount: $${totalAmount.toFixed(2)}*\n\n`;
+  confirmationText += `📋 *Items:*\n`;
+  
+  cart.forEach((item, index) => {
+    confirmationText += `${index + 1}. *${item.lender}*\n`;
+    confirmationText += `   💳 Limit: $${item.limit.toLocaleString()}\n`;
+    confirmationText += `   📅 Statement Day: ${item.statementDay}\n`;
+    confirmationText += `   📆 Posting: ${item.posting}\n`;
+    confirmationText += `   ⏰ Age: ${formatAge(item.ageMonths)}\n`;
+    confirmationText += `   🔢 Spots: ${item.spots}\n`;
+    confirmationText += `   💵 Price: $${formatMoney(item.price)} x ${item.quantity} = $${formatMoney(item.price * item.quantity)}\n\n`;
+  });
+  
+  confirmationText += `\n📞 Contact me to complete the order!`;
+  
+  const telegramUrl = `https://t.me/lasardinia?text=${encodeURIComponent(confirmationText)}`;
+  
+  window.open(telegramUrl, '_blank');
+  
+  addOrder({
+    items: cart.map(item => ({
+      lender: item.lender,
+      limit: item.limit,
+      statementDay: item.statementDay,
+      posting: item.posting,
+      ageMonths: item.ageMonths,
+      spots: item.spots,
+      price: item.price,
+      quantity: item.quantity
+    })),
+    total: totalAmount
+  });
+  
+  clearCart();
+  
+  updateProfileDisplay();
+  
+  showNotification('Payment confirmation sent to Telegram! Order added to history.');
+});
+
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  logoutUser();
+  showNotification('You have logged out');
+});
+
+document.getElementById('loginForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const email = document.getElementById('loginEmail').value;
+  const phone = document.getElementById('loginPhone').value;
+  const password = document.getElementById('loginPassword').value;
+  
+  const result = loginUser(email, phone, password);
+  
+  if (result.success) {
+    updateAuthUI();
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('loginForm').reset();
+    showNotification(result.message);
+  } else {
+    showNotification(result.message, true);
+  }
+});
+
+
+document.getElementById('registerForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const userData = {
+    firstName: document.getElementById('regFirstName').value,
+    lastName: document.getElementById('regLastName').value,
+    phone: document.getElementById('regPhone').value,
+    email: document.getElementById('regEmail').value,
+    password: document.getElementById('regPassword').value,
+    confirmPassword: document.getElementById('regConfirmPassword').value
+  };
+  
+  const result = registerUser(userData);
+  
+  if (result.success) {
+    document.getElementById('registerModal').style.display = 'none';
+    document.getElementById('registerForm').reset();
+    showNotification(result.message);
+  } else {
+    showNotification(result.message, true);
+  }
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab + 'Tab').classList.add('active');
+  });
+});
+
+document.getElementById('addFundsForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const amount = parseFloat(document.getElementById('amount').value);
+  const method = document.getElementById('paymentMethod').value;
+  
+  if (amount < 10) {
+    showNotification('Minimum amount is $10', true);
+    return;
+  }
+  
+  addPayment(amount, method);
+  updateProfileDisplay();
+  document.getElementById('addFundsModal').style.display = 'none';
+  document.getElementById('addFundsForm').reset();
+  showNotification(`Successfully added $${amount.toFixed(2)} to your balance!`);
+});
+
+
+
+
+const savedUser = localStorage.getItem('currentUser');
+if (savedUser) {
+  currentUser = JSON.parse(savedUser);
+  updateAuthUI();
+}
+
+render(rows);
+</script>
+</body>
+</html>
